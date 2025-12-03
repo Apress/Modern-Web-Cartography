@@ -1,0 +1,62 @@
+{% extends 'base_ll.html' %}
+
+{% block title %}{{ name }}{% endblock %}
+
+{% block header %}
+<h2>{{ name }}</h2>
+{% endblock %}
+
+{% block script %}
+<script id="geojson-data" type="application/json">
+{{ geojson_data | safe }}
+</script>
+   
+<script type="text/javascript">
+let map;
+try {
+    const geojsonData = JSON.parse(document.getElementById("geojson-data").textContent);
+   
+    map = L.map('map').setView({{ loc }}, 14);
+   
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+   
+    function style(feature) {
+        const highwayType = feature.properties.tags.highway;
+        if (highwayType === 'motorway' || highwayType === 'motorway_link' || highwayType === 'trunk' || highwayType === 'trunk_link') {return {color: '#FF0000'};}
+        else if (highwayType === 'primary') {return {color: '#FF8C00'};}
+        else if (highwayType === 'secondary') {return {color: '#FFD700'};}
+        else if (highwayType === 'tertiary') {return {color: '#FFFF00'};}
+        else {return {color: '#32CD32'};}
+    }
+
+    const geoJSON = L.geoJSON(geojsonData, {
+        style: style,
+        onEachFeature: function (feature, layer) {
+            const tags = feature.properties?.tags;
+            if (tags && tags.name) {
+                layer.bindTooltip(feature.properties.tags.name, { permanent: false, direction: "top" });
+            }
+        }
+    }).addTo(map);
+
+    const layer = {
+        "Carriageways": geoJSON
+    };
+
+    L.control.layers({}, layer).addTo(map);
+
+} catch(e) {
+    if (typeof map !== 'undefined' && map) {map.remove();}
+
+    const div = document.getElementById("map")
+    if (div) {div.remove();}
+        
+    const elemDiv = document.createElement('div');
+    elemDiv.innerHTML = `<p>${e}</p>`;
+    document.body.appendChild(elemDiv);
+}
+</script>
+{% endblock %}

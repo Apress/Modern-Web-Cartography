@@ -1,0 +1,68 @@
+{% extends 'base_ll.html' %}
+
+{% block title %}{{ name }}{% endblock %}
+
+{% block header %}
+<h2>{{ name }}</h2>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+let map;
+
+function updatePositionOnMap(position) {
+    const lat = position.coords.latitude;
+    const long = position.coords.longitude; 
+
+    if (!map) {
+        map = L.map('map').setView([lat, long], 10);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map);
+
+        const userIcon = L.icon({
+            iconUrl: '/static/silhouette.jpg',
+            iconSize: [20, 40],
+            iconAnchor: [10, 20],
+            popupAnchor: [0, -20]
+        });
+    
+        userMarker = L.marker([lat, long], { icon: userIcon }).addTo(map);
+        userMarker.bindPopup(`<b>I am here!</b><br>[${lat.toFixed(5)}, ${long.toFixed(5)}]`).openPopup();
+
+        map.setView([lat, long], 14, { animate: true, duration: 1 });
+    } else {
+        userMarker.setLatLng([lat, long]);
+        userMarker.setPopupContent(`<b>I am now here!</b><br>[${lat.toFixed(5)}, ${long.toFixed(5)}]`);
+        
+        map.setView([lat, long], map.getZoom(), { animate: true });
+    }
+}
+
+function handleGeolocationError(error) {
+    const errorMsg = {
+        1: "Permission denied by user",
+        2: "Position not available",
+        3: "Timeout exceeded",
+    }[error.code] || "Unknown error";
+
+    const elemDiv = document.createElement('div');
+    elemDiv.innerHTML = `<p>Geolocation error: ${errorMsg}</p>`;
+    document.body.appendChild(elemDiv);
+}  
+
+if (navigator.geolocation) {
+    navigator.geolocation.watchPosition(updatePositionOnMap, handleGeolocationError, {
+        enableHighAccuracy: true,
+        maximumAge: 5000,
+        timeout: 10000
+    });
+} else {
+    const elemDiv = document.createElement('div');
+    elemDiv.innerHTML = "<p>Geolocation is not supported by this browser</p>";
+    document.body.appendChild(elemDiv);
+}
+</script>
+{% endblock %}

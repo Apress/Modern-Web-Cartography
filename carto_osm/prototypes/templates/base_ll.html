@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}{% endblock %} - Prototypes</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  {% block links %}{% endblock %}
+</head>
+<body>
+  <nav>
+    <h1>Displaying OpenStreetMap maps</h1>
+  </nav>
+  <section class="content">
+    <header>
+      {% block header %}{% endblock %}
+    </header>
+    {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message | safe }}</div>
+    {% endfor %}
+    <div id="map" style="width: 100%; height: 80vh;"></div>
+    {% block content %}{% endblock %}
+  </section>
+  <script src=https://unpkg.com/leaflet@1.9.4/dist/leaflet.js integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script type="text/javascript">
+  window.onerror = function(message, url, linenumber) {
+      if (typeof map !== 'undefined' && map) map.remove();
+      const div = document.getElementById("map");
+      if (div) div.remove();
+      const elemDiv = document.createElement('div');
+      elemDiv.innerHTML = `<p>${message}, ligne ${linenumber}</p>`;
+      document.body.appendChild(elemDiv);
+    }
+  </script>
+  {% block script %}{% endblock %}
+</body>
+</html>

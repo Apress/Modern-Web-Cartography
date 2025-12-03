@@ -1,0 +1,120 @@
+{% extends 'base_ll.html' %}
+
+{% block title %}{{ name }}{% endblock %}
+
+{% block header %}
+<h2>{{ name }}</h2>
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+<script type="text/javascript">
+let map;
+try {
+    map = L.map('map').setView([38, -100], 5);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    const legend = L.control({position: 'bottomleft'});
+    legend.onAdd = function(map) {
+        const div = L.DomUtil.create('div', 'info legend');
+
+        div.innerHTML += `<strong>Distance and area measurement:</strong><br>`;
+        div.innerHTML += `- To measure a distance, draw a polyline by clicking two or more points on the map<br>`;
+        div.innerHTML += `- To close a polyline into a polygon and display its perimeter and area, press 'C'<br>`;
+        div.innerHTML += `- To finish the current measurement and start a new one, press 'R'`;
+
+        return div;
+    };
+
+    legend.addTo(map);
+
+    let points = []; 
+    let circleMarkers = [];
+    let polyline;
+    let polygon;
+    let dist;
+
+    map.on('click', function(e) {
+        if (!polygon) {
+            const latlng = e.latlng;
+
+            points.push(latlng);
+
+            const newCircleMarker = L.circleMarker(latlng, {radius: 5}).addTo(map);
+            circleMarkers.push(newCircleMarker);
+
+            if (points.length === 1) {
+                polyline = L.polyline(points).addTo(map);
+
+                dist = 0;
+            } else {
+                polyline.addLatLng(latlng);
+
+                dist = dist + haversine(points[points.length -2], points[points.length - 1])
+
+                newCircleMarker.bindPopup(`Distance: ${dist.toFixed(3)} miles`)
+                .openPopup();
+            }
+        }
+    });
+
+    map.on('keypress', function(e) {
+        if (e.originalEvent.key === 'R') {
+            if (polyline) polyline.remove();
+            if (polygon) polygon.remove();
+            polygon = null;
+            for (let marker of circleMarkers) marker.remove();
+
+            points = [];
+            circleMarkers = [];
+        } else if (e.originalEvent.key === 'C' && !polygon && points.length > 2) {
+            dist = dist + haversine(points[points.length -2], points[0]);
+
+            polygon = L.polygon(points).addTo(map);
+            polyline.remove();
+
+            const geojson = polygon.toGeoJSON();
+            const area = turf.area(geojson) / (1609.34 * 1609.34);
+
+            polygon.bindPopup(`<strong>Perimeter: </strong> ${dist.toFixed(3)} miles<br/><strong>Area:</strong> ${area.toFixed(3)} square miles`)
+            .openPopup();
+        }
+    });
+
+} catch(e) {    
+    if (typeof map !== 'undefined' && map) {map.remove();}
+
+    const div = document.getElementById("map")
+    if (div) {div.remove();}
+        
+    const elemDiv = document.createElement('div');
+    elemDiv.innerHTML = `<p>${e}</p>`;
+    document.body.appendChild(elemDiv);
+}
+
+function haversine(latlng1, latlng2) {
+    //const R = 6371; // Earth's radius in kilometers
+    const R = 3959; // Earth's radius in miles
+
+    const toRad = angle => angle * Math.PI / 180;
+
+    const dLat = toRad(latlng2.lat - latlng1.lat);
+    const dLon = toRad(latlng2.lng - latlng1.lng);
+
+    const phi1 = toRad(latlng1.lat);
+    const phi2 = toRad(latlng2.lat);
+
+    const a = Math.sin(dLat / 2) ** 2 +
+        Math.cos(phi1) * Math.cos(phi2) *
+        Math.sin(dLon / 2) ** 2;
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c;
+}
+</script>
+{% endblock %}

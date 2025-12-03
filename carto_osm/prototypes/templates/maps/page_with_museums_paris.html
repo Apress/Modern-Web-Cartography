@@ -1,0 +1,99 @@
+{% extends 'base_ll.html' %}
+ 
+{% block title %}{{ name }}{% endblock %}
+ 
+{% block links %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-extra-markers@1.2.1/dist/css/leaflet.extra-markers.min.css">
+{% endblock %}
+
+{% block header %}
+<h2>{{ name }}</h2>
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/leaflet-extra-markers@1.2.1/dist/js/leaflet.extra-markers.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/osmtogeojson@3.0.0-beta.5/osmtogeojson.min.js"></script>
+
+<script type="text/javascript">
+let map;
+const overpassQuery = `
+    [out:json][timeout:25];
+    area[name="{{ city }}"][wikipedia="{{ wikipedia_city }}"]->.searchArea; 
+    nr[tourism="museum"](area.searchArea); 
+    out geom;
+`;
+
+fetch("https://overpass-api.de/api/interpreter?", {
+    method: "POST",
+    body: "data=" + encodeURIComponent(overpassQuery)})
+.then(response => response.json())
+.then(data => {
+    const geojsonData = osmtogeojson(data);
+    
+    map = L.map('map').setView({{ loc }}, 13);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    const geoJSON = L.geoJSON(geojsonData, {
+        pointToLayer: function(feature, latlng) {
+            let markerColor = "red";
+            if (feature.properties.wheelchair === "yes") {
+                markerColor = "green";
+            } else if (feature.properties.wheelchair === "limited") {
+                markerColor = "orange";
+            }
+
+            const monumentMarker = L.ExtraMarkers.icon({
+                icon: 'fa-university',
+                markerColor: markerColor,
+                shape: 'square',
+                prefix: 'fa'
+            });
+
+            return new L.Marker(latlng, {icon: monumentMarker});
+        },
+        style: function(feature) {
+            const style = {
+                color: "red",       
+                weight: 4,           
+                opacity: 0.7
+            };
+        
+            if (feature.properties.wheelchair === "yes") {
+                style.color = "green";
+            } else if (feature.properties.wheelchair === "limited") {
+                style.color = "orange";
+            }
+
+            return style;
+        },
+        onEachFeature: function(feature, layer) {
+            if (feature.properties.name) {
+                layer.bindPopup(feature.properties.name, { permanent: false, direction: "top" });
+            }
+        }
+    }).addTo(map);
+    
+    const layer = {
+        "Museums": geoJSON
+    };
+
+    L.control.layers({}, layer).addTo(map);
+
+})
+.catch(error => {
+    if (typeof map !== 'undefined' && map) {map.remove();}
+
+    const div = document.getElementById("map")
+    if (div) {div.remove();}
+        
+    const elemDiv = document.createElement('div');
+    elemDiv.innerHTML = `<p>${error}</p>`;
+    document.body.appendChild(elemDiv);
+});
+</script>
+{% endblock %}

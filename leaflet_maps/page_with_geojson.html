@@ -1,0 +1,69 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<title>Simple OSM map created with Leaflet</title>
+</head>
+<body>
+<h2>Map with added GeoJSON data</h2>
+<div id="map" style="width: 1030px; height: 620px;"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script type="text/javascript">
+window.onerror = function(message, url, linenumber) {
+    if (typeof map !== 'undefined' && map) {map.remove();}
+    
+    const div = document.getElementById("map")
+    if (div) {div.remove();}
+        
+    const elemDiv = document.createElement('div');
+    elemDiv.innerHTML = `<p>${message}, ligne ${linenumber}</p>`;
+    document.body.appendChild(elemDiv);
+}
+</script>
+<script type="text/javascript">
+let map ;
+fetch("https://raw.githubusercontent.com/python-visualization/folium-example-data/main/world_countries.json")
+.then(response => response.json())
+.then(geojsonData => {
+    map = L.map('map').setView([51.505, -0.09], 2);
+    
+    const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    const style = {
+        'color': '#E31A1C',
+        'fillColor': '#FED976',
+        'weight': 1,
+        'opacity': 1,
+        'fillOpacity': 0.7
+    };
+
+    const geoJsonObj = L.geoJSON(geojsonData, { 
+        style: style, 
+        onEachFeature: function (feature, layer) {
+            if (feature.properties.name) {
+                layer.bindPopup(feature.properties.name);
+            }
+		}
+    }).addTo(map);
+           
+    const layers = {
+        "Countries of the world": geoJsonObj
+    };
+
+    L.control.layers({}, layers).addTo(map);
+})
+.catch(error => {
+    if (typeof map !== 'undefined' && map) {map.remove();}
+
+    const div = document.getElementById("map")
+    if (div) {div.remove();}
+        
+    const elemDiv = document.createElement('div');
+    elemDiv.innerHTML = `<p>${error}</p>`;
+    document.body.appendChild(elemDiv);
+});
+</script>
+</body>
+</html>

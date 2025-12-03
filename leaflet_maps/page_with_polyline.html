@@ -1,0 +1,95 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<title>Simple OSM map created with Leaflet</title>
+</head>
+<body>
+<h2>Simple map of the Channel Tunnel</h2>
+<div id="map" style="width: 1030px; height: 620px;"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script type="text/javascript">
+window.onerror = function(message, url, linenumber) {
+    if (typeof map !== 'undefined' && map) {map.remove();}
+    
+    const div = document.getElementById("map")
+    if (div) {div.remove();}
+        
+    const elemDiv = document.createElement('div');
+    elemDiv.innerHTML = `<p>${message}, ligne ${linenumber}</p>`;
+    document.body.appendChild(elemDiv);
+}
+</script>
+<script type="text/javascript">
+let map;
+try {
+    map = L.map('map', {zoomSnap: 0.1}).setView([51.065, 1.408], 14);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+    
+    const latlngs = [
+        [51.0933, 1.1343],
+        [51.0970, 1.1714],
+        [51.1115, 1.2405],
+        [51.1100, 1.2803],
+        [51.1065, 1.3046],
+        [51.0667, 1.4086],
+        [51.0151, 1.4903],
+        [50.9845, 1.5916],
+        [50.9637, 1.6809],
+        [50.9499, 1.7317],
+        [50.9284, 1.7578],
+        [50.9135, 1.8059]
+    ];
+
+    const polyline = L.polyline(latlngs, {
+        color: 'red'
+    })
+    .bindTooltip('Channel Tunnel')
+    .addTo(map);
+
+    const circle = L.circle([51.0933, 1.1343],
+        {color: 'darkblue',
+        fillColor: 'blue',
+        fillOpacity: 0.5,
+        radius: 5000})
+    .bindPopup('Folkestone')
+    .addTo(map);
+
+    const triangle = L.polygon([
+        [50.8794, 1.7070],
+        [50.8794, 1.9148],
+        [50.9897, 1.8059]],
+        {color: 'darkgreen',
+        fillColor: 'green'})
+    .bindPopup('Peuplingues')
+    .addTo(map);
+    
+    const group = L.featureGroup([polyline, circle, triangle]); 
+
+    map.fitBounds(group.getBounds());
+
+    L.control.scale().addTo(map);
+	
+	const layers = {
+        "Tunnel": polyline,
+        "Folkestone": circle,
+        "Peuplingues": triangle
+    };
+
+    L.control.layers(null, layers).addTo(map);
+
+} catch(e) {
+    if (typeof map !== 'undefined' && map) {map.remove();}
+
+    document.getElementById("map").remove();
+        
+    const elemDiv = document.createElement('div');
+    elemDiv.innerHTML = `<p>${e}</p>`;
+    document.body.appendChild(elemDiv);
+}
+</script>
+</body>
+</html>
