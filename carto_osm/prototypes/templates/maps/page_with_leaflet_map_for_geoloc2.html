@@ -1,0 +1,38 @@
+{% extends 'base_ll.html' %}
+
+{% block title %}{{ name }}{% endblock %}
+
+{% block header %}
+<h2>{{ name }}</h2>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+let map;
+fetch("https://ipwho.is/")
+.then(response => response.json())
+.then(data => {
+    if (!data || !data.latitude || !data.longitude) throw new Error("Coordinates not found");
+    const [lat, lon] = [data.latitude, data.longitude];
+
+    map = L.map('map').setView([lat, lon], 14);
+    
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+    
+    L.marker([lat, lon]).addTo(map).bindPopup(`<b>I'm here!</b><br>${data.city}, ${data.country}`).openPopup();
+})
+.catch(error => {
+    if (typeof map !== 'undefined' && map) {map.remove();}
+     
+    const div = document.getElementById("map")
+    if (div) {div.remove();}
+      
+    const elemDiv = document.createElement('div');
+    elemDiv.innerHTML = `<p>${error}</p>`;
+    document.body.appendChild(elemDiv);
+});
+</script>
+{% endblock %}

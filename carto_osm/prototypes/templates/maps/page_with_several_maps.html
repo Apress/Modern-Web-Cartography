@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ name }}{% endblock %}
+
+{% block header %}
+<h2>{{ name }}</h2>
+<style>
+.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+    transition: 0.4s;
+}
+        
+.active, .accordion:hover {
+    background-color: #ccc; 
+}
+        
+.panel {
+    padding: 0 18px;
+    display: none;
+    background-color: white;
+    overflow: hidden;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+{% if maps_with_names is defined %}
+    {% for map_with_name in maps_with_names %}
+        <button class="accordion">{{ map_with_name[0] }}</button>
+        <div class="panel">
+        <table frame="box"><tr>
+            <td width="800px" rule="yes">{{ map_with_name[1] | safe }}</td>
+        </tr></table>
+        <p/>
+        </div>
+    {% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block script %}
+<script>
+let acc = document.getElementsByClassName("accordion");
+let i;
+    
+for (i = 0; i < acc.length; i++) {
+    acc[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        let panel = this.nextElementSibling;
+        if (panel.style.display === "block") {
+            panel.style.display = "none";
+        } else {
+            panel.style.display = "block";
+        }
+    });
+}
+</script>
+{% endblock %}

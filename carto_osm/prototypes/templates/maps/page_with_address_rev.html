@@ -1,0 +1,84 @@
+{% extends 'base_ll.html' %}
+
+{% block title %}{{ name }}{% endblock %}
+
+{% block header %}
+<h2>{{ name }}</h2>
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+let map;
+let currentMarker;
+    
+async function getAddress(lat, lon) {
+    try {
+        const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&zoom=16&format=json`
+        );
+
+        if (response.ok) {
+            const data = await response.json();
+
+            return data.hasOwnProperty('display_name') ? data.display_name : "In the middle of nowhere";
+        } else {
+            return "Communication error with Nominatim!";
+        }
+    } catch (error) {
+        return "Communication error with Nominatim!";
+    }
+}  
+
+async function initializeMap() {
+    const loc = {{ loc | tojson }};
+
+    if ("{{ loc[0] }}" !== "" && "{{ loc[1] }}" !== "") {
+        const initLat = Number(loc[0]); 
+        const initLon = Number(loc[1]);
+
+        map = L.map('map').setView([initLat, initLon], {{ zoom }});
+
+        L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        const address = await getAddress(initLat, initLon);
+
+        currentMarker = L.marker(loc).addTo(map)
+        .bindPopup(`${address}<br/>[${initLat.toFixed(5)}, ${initLon.toFixed(5)}]`)
+        .openPopup();
+    } else {
+        map = L.map('map').setView([45, -90], {{ zoom }});
+
+        L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap France | &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+    }
+
+    async function onMapClick(e) {
+        const latlng = e.latlng;
+        const address = await getAddress(latlng.lat, latlng.lng);
+
+        let zoom = map.getZoom();
+        if (zoom < 8) {
+            zoom = 8;
+        }
+        map.setView(latlng, zoom);
+
+        if (currentMarker) {
+             map.removeLayer(currentMarker);
+        }
+
+        currentMarker = L.marker(latlng).addTo(map)
+        .bindPopup(`${address}<br/>[${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}]`)
+        .openPopup();
+    }
+
+    map.on('click', onMapClick);
+}  
+
+initializeMap()
+</script>
+{% endblock %}

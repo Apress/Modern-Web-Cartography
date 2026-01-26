@@ -1,0 +1,234 @@
+/* ==========
+   Global variables
+   ========== */
+:root {
+  --color-primary: #377ba8;
+  --color-bg-body: #f0f0f0;
+  --color-bg-nav: lightblue;
+  --color-bg-flash: #faa5a5;
+  --color-border-flash: #fa5b5b;
+  --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+               Roboto, Helvetica, Arial, sans-serif;
+  --max-width: 1060px;
+  --padding-page: 1rem;
+}
+
+/* ==========
+   Base styles
+   ========== */
+html {
+  font-family: var(--font-main);
+  background: #fff;
+  padding: var(--padding-page);
+  color: #000;
+}
+
+body {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  background: var(--color-bg-body);
+  line-height: 1.5;
+}
+
+h1, h2 {
+  font-family: var(--font-main);
+  color: var(--color-primary);
+  margin: 1rem 0;
+}
+
+h1 { font-size: 1.56rem; } /* ≈ 25px */
+h2 { 
+  line-height: 1.1;
+  font-size: 1.31rem; 
+} /* ≈ 21px */
+
+a {
+  color: var(--color-primary);
+  text-decoration-thickness: 1px;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid lightgray;
+}
+
+/* ==========
+   Navigation
+   ========== */
+nav {
+  background: var(--color-bg-nav);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem;
+  flex-wrap: wrap; /* responsive */
+}
+
+nav h1 {
+  margin: 0;
+  line-height: 1.1;
+  flex: 1 1 auto;
+}
+
+nav h1 a {
+  text-decoration: none;
+  padding: 0.25rem 0.5rem;
+}
+
+nav ul {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap; /* better for small screens */
+}
+
+nav ul li a,
+nav ul li span,
+header .action {
+  display: block;
+  padding: 0.5rem;
+  font-weight: 400;
+}
+
+/* ==========
+   Content area
+   ========== */
+.content {
+  padding: 0 1rem 1rem;
+}
+
+.content > header {
+  border-bottom: 1px solid lightgray;
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap; /* ensures text doesn’t overflow on small screens */
+}
+
+.content > header h1 {
+  flex: 1 1 auto;
+  margin: 1rem 0 0.25rem;
+}
+
+/* ==========
+   Flash messages
+   ========== */
+.flash {
+  margin: 1em 0;
+  padding: 1em;
+  background: var(--color-bg-flash);
+  border: 1px solid var(--color-border-flash);
+  border-radius: 6px;
+}
+
+/* ==========
+   Posts
+   ========== */
+.post > header {
+  display: flex;
+  align-items: flex-end;
+  font-size: 0.85em;
+  flex-wrap: wrap;
+}
+
+.post > header > div:first-of-type {
+  flex: 1 1 auto;
+}
+
+.post > header h1 {
+  font-size: 1.5em;
+  margin-bottom: 0;
+}
+
+.post .about {
+  color: slategray;
+  font-style: italic;
+}
+
+.post .body {
+  white-space: pre-line;
+}
+
+.content:last-child {
+  margin-bottom: 0;
+}
+
+/* ==========
+   Forms
+   ========== */
+.content form {
+  margin: 1em 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.content label {
+  font-weight: 600;
+}
+
+.content input,
+.content textarea {
+  font-family: var(--font-main);
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.content textarea {
+  min-height: 12em;
+  resize: vertical;
+}
+
+input.danger {
+  color: #cc2f2e;
+}
+
+input[type="submit"] {
+  align-self: start;
+  min-width: 10em;
+  cursor: pointer;
+}
+
+/* ==========
+   Legend (map control)
+   ========== */
+.legend {
+  background: #fff;
+  padding: 6px 8px;
+  font: 14px/16px var(--font-main);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  line-height: 18px;
+  color: #555;
+}
+
+.legend i {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin-right: 8px;
+  opacity: 0.7;
+}
+
+/* ==========
+   Responsiveness
+   ========== */
+@media (max-width: 768px) {
+  body {
+    background: #fff;
+  }
+
+  nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  nav ul {
+    justify-content: center;
+  }
+
+  .content {
+    padding: 0.5rem;
+  }
+}

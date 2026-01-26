@@ -1,0 +1,80 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-extra-markers@1.2.1/dist/css/leaflet.extra-markers.min.css">
+<title>OSM map created with Leaflet</title>
+</head>
+<body>
+<h2>Simple map of central London</h2>
+<div id="map" style="width: 1030px; height: 620px;"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet-extra-markers@1.2.1/dist/js/leaflet.extra-markers.min.js"></script>
+<script type="text/javascript">
+window.onerror = function(message, url, linenumber) {
+    if (typeof map !== 'undefined' && map) {map.remove();}
+
+    const div = document.getElementById("map")
+    if (div) {div.remove();}
+        
+    const elemDiv = document.createElement('div');
+    elemDiv.innerHTML = `<p>${message}, line ${linenumber}</p>`;
+    document.body.appendChild(elemDiv);
+}
+</script>
+<script type="text/javascript">
+let map;
+try {
+    map = L.map('map').setView([51.505, -0.09], 13);
+
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    L.control.scale().addTo(map);
+	
+    const monumentMarker = L.ExtraMarkers.icon({
+        icon: 'fa-university',
+        markerColor: 'red',
+        shape: 'circle',
+        prefix: 'fa'
+    });
+
+    L.marker([51.50853, -0.07613], {icon: monumentMarker}).addTo(map)
+    .bindPopup('Tower of London');
+	
+    L.marker([51.49628, -0.14520], {icon: monumentMarker}).addTo(map)
+    .bindPopup('Buckingham Palace');
+	
+    L.marker([51.50073, -0.12463], {icon: monumentMarker}).addTo(map)
+    .bindPopup('Big Ben');
+
+    const gardenMarker = L.ExtraMarkers.icon({
+        icon: 'fa-tree',
+        markerColor: 'green',
+        shape: 'circle',
+        prefix: 'fa'
+    });
+
+    L.marker([51.50914, -0.16123], {icon: gardenMarker}).addTo(map)
+    .bindPopup('Hyde Park');
+
+    L.popup()
+    .setLatLng([51.50775, -0.04616])
+    .setContent("River Thames")
+    .openOn(map);
+
+} catch(e) {
+    if (typeof map !== 'undefined' && map) {map.remove();}
+
+    const div = document.getElementById("map")
+    if (div) {div.remove();}
+        
+    const elemDiv = document.createElement('div');
+    elemDiv.innerHTML = `<p>${e}</p>`;
+    document.body.appendChild(elemDiv);
+}
+</script>
+</body>
+</html>
