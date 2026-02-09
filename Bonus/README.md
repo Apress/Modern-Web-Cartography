@@ -14,4 +14,4 @@
 <p>The tool provides functions to create, modify, and delete stages, as well as their points and sections.</p>
 <p>A key feature of this example is its extensive use of <strong>event handlers</strong> attached to various objects: the map, circle markers, and polylines. Depending on the context (stage editing mode or supervision mode), the required event handlers differ, and most of them cannot be assigned once and for all. Instead, they must be <strong>registered</strong>, in order to be dynamically <strong>retrieved</strong>, <strong>removed</strong>, and <strong>replaced</strong> by others as the context changes.</p>
 <br/>
-<p>Patrick MARIE</p>
+![Dijon-Besançon](https://github.com/user-attachments/assets/4a924789-d27d-464e-be7c-d910879c900e)
