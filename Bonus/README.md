@@ -17,3 +17,4 @@
 <img width="1919" height="919" alt="image" src="GPX_Route_Planner.jpg" />
 <br/>
 <p>This application is also available as open-source code at: <a href="https://github.com/patricklmarie/GPX-Route-Planner">GPX Route Planner</a>.</p>
+<p>Live demo: <a href="https://patricklmarie.github.io/GPX-Route-Planner/">https://patricklmarie.github.io/GPX-Route-Planner/</a></p>
