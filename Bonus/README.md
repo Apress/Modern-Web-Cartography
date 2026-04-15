@@ -2,7 +2,7 @@
 <p>GPX_Route_Planner.html is a small <strong>route-planning application</strong>. It is designed to enable hikers, cyclists, and even motorists to plan their trip by plotting a route on a map.</p>
 <p>It is also a <strong>GPX editor</strong>: the route can be exported as a GPX file and then used with GPS devices or mobile navigation apps such as OsmAnd or Locus.</p>
 <p>The entire application is contained in a single HTML file and can be run simply by opening it in a web browser.</p>
-<p>This example is more complex than those included in the book, although it uses the same techniques: <strong>Leaflet</strong> to render the map and the route, <strong>Nominatim</strong> to locate places from their addresses, <strong>BRouter</strong> to plan routes between locations, and the browser’s <strong>Geolocation API</strong> to determine the user’s position.</p>
+<p>This example is more complex than those included in the book, although it uses the same techniques: <strong>Leaflet</strong> to render the map and the route, <strong>Nominatim</strong> to locate places from their addresses, <strong>BRouter</strong> to plan routes between locations, <strong>Open-Meteo Elevation API</strong> to search for elevations, and the browser’s <strong>Geolocation API</strong> to determine the user’s position.</p>
 <p>In this tool, <strong>a route</strong> consists of:</p>
 <ul>
 <li><strong>One or more stages</strong>. A stage represents a journey planned to be completed in one go or in a single day. It consists of:
@@ -11,9 +11,9 @@
 <li><strong>One or more sections</strong>. A section is a path (curved or straight) connecting two points of a stage. Sections are rendered on the map using <strong>polylines</strong>. Their position and shape are calculated using BRouter or by drawing a straight segment, depending on the selected option.</li>
 </ul>
 </ul>
-<p>The tool provides functions to create, modify, and delete stages, as well as their points and sections.</p>
+<p>The tool provides functions to create, modify, and delete stages, as well as their points and sections. The stages can also be named, reversed, split and merged. The resulting routes can be exported as GPX files to be used with GPS devices or mobile navigation apps. It is also possible to import GPX files into the application.</p>
 <p>A key feature of this example is its extensive use of <strong>event handlers</strong> attached to various objects: the map, circle markers, and polylines. Depending on the context (stage editing mode or supervision mode), the required event handlers differ, and most of them cannot be assigned once and for all. Instead, they must be <strong>registered</strong>, in order to be dynamically <strong>retrieved</strong>, <strong>removed</strong>, and <strong>replaced</strong> by others as the context changes.</p>
 <br/>
 <img width="1919" height="919" alt="image" src="GPX_Route_Planner.jpg" />
 <br/>
-<p>A more advanced version of this application, with additional functionalities (split stage, merge stages...) is available at: <a href="https://github.com/patricklmarie/GPX-Route-Planner">GPX Route Planner Advanced</a>. However, the code of this advanced version is also more complex.</p>
+<p>This application is also available at: <a href="https://github.com/patricklmarie/GPX-Route-Planner">GPX Route Planner</a>.</p>
