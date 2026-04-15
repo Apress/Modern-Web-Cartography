@@ -14,6 +14,6 @@
 <p>The tool provides functions to create, modify, and delete stages, as well as their points and sections.</p>
 <p>A key feature of this example is its extensive use of <strong>event handlers</strong> attached to various objects: the map, circle markers, and polylines. Depending on the context (stage editing mode or supervision mode), the required event handlers differ, and most of them cannot be assigned once and for all. Instead, they must be <strong>registered</strong>, in order to be dynamically <strong>retrieved</strong>, <strong>removed</strong>, and <strong>replaced</strong> by others as the context changes.</p>
 <br/>
-<img width="1919" height="919" alt="image" src="ViaFrancigena.jpg" />
+<img width="1919" height="919" alt="image" src="GPX_Route_Planner.jpg" />
 <br/>
 <p>A more advanced version of this application, with additional functionalities (split stage, merge stages...) is available at: <a href="https://github.com/patricklmarie/GPX-Route-Planner">GPX Route Planner Advanced</a>. However, the code of this advanced version is also more complex.</p>
