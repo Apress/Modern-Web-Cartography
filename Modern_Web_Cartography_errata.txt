@@ -1,0 +1,41 @@
+CHAPTER 1, PAGE 15:
+
+The "file://" protocol can no longer be used to run the Leaflet example. It is now recommended to run this example using a local web server and access it via the "http://" protocol. For a detailed explanation, please refer to the erratum for Chapter 4.
+
+CHAPTER 4:
+
+At the time of writing the book, the simplest way to run the Leaflet examples in Chapter 4, each one consisting of a plain HTML file, was to open the file directly in a browser using the "file://" protocol. Shortly after the book was published, this became impossible due to changes in both browser behavior and tile‑server policies: 
+
+1.  Browsers hardened security around "file://" origins.  
+    Chrome, Firefox, Edge, and Safari now enforce stricter rules:
+    – No "Referer" for "file://".  
+    – No "Origin" for "file://".
+    – No referrerPolicy override.
+    – No CORS preflight.
+    – No mixed‑content exceptions.
+    These changes were part of a broader tightening of local‑file security. As a result, OSM tile servers began rejecting requests from pages loaded via "file://".
+
+2.  OSM upgraded its tile‑server infrastructure.  
+    More servers were moved behind CloudFront and Fastly, with:
+    – stricter CDN rules,
+    – stronger anti‑abuse filters,
+    – consistent "Referer" enforcement,
+    – consistent "Origin" enforcement.
+    This was necessary because tile traffic increased dramatically, scraping intensified, and AI datasets were pulling tiles at scale. These upgrades effectively enforced the long‑standing rule that "Requests must include a valid HTTP Referer," which "file://" pages cannot provide.
+
+Because of these changes, running the Chapter 4 examples via the "file://" protocol now causes most tile servers to return the following error: 
+"Access blocked. Referer is required by tile usage policy of OpenStreetMap's volunteer-run servers: osm.wiki/Blocked". 
+
+It is therefore recommended to run these examples using a local web server and access them via the "http://" protocol. Two simple ways to do this are:
+
+1.  Use Python to start a local web server.
+    On macOS and Linux, Python is usually included with the operating system. On Windows, you must download it from "https://www.python.org/downloads/windows/", install it, and add it to your PATH. Once installed, open a terminal in the directory containing the Chapter 4 example files and run: 
+	"python -m http.server 8000" 
+	This starts a web server listening on port 8000. You can then open an example in your browser using:
+	"http://localhost:8000/<example_file_name>.html"
+
+2.  Use the Live Server extension of Visual Studio Code.
+    Visual Studio Code can run a local web server through its Live Server extension. Open VS Code, choose "File > Open Folder", select the directory containing the example files, and "Trust" the folder to enable all features. Then open an HTML example file in the editor, right‑click it in the Explorer, and select "Open with Live Server".
+	The file will be rendered in your browser.
+	
+Any other local web server can also be used.
